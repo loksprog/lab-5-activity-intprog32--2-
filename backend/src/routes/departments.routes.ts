@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { Op } from "sequelize";
 import { db } from "../_helpers/db";
+import { Role } from "../_helpers/role";
 import { authenticateToken, authorizeRole } from "../_middleware/auth";
 
 const router = Router();
@@ -12,7 +13,7 @@ router.get("/", authenticateToken, async (_req: Request, res: Response): Promise
 });
 
 // POST /api/departments
-router.post("/", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.post("/", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const { name, description } = req.body;
 
   if (!name || !description) {
@@ -31,7 +32,7 @@ router.post("/", authenticateToken, authorizeRole("admin"), async (req: Request,
 });
 
 // PUT /api/departments/:id
-router.put("/:id", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.put("/:id", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(String(req.params.id));
   const dept = await db.Department.findByPk(id);
 
@@ -58,7 +59,7 @@ router.put("/:id", authenticateToken, authorizeRole("admin"), async (req: Reques
 });
 
 // DELETE /api/departments/:id
-router.delete("/:id", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.delete("/:id", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(String(req.params.id));
   const dept = await db.Department.findByPk(id);
 

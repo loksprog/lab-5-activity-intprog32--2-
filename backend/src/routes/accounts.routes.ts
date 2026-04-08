@@ -1,18 +1,19 @@
 import { Router, Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import { db } from "../_helpers/db";
+import { Role } from "../_helpers/role";
 import { authenticateToken, authorizeRole } from "../_middleware/auth";
 
 const router = Router();
 
 // GET /api/accounts
-router.get("/", authenticateToken, authorizeRole("admin"), async (_req: Request, res: Response): Promise<void> => {
+router.get("/", authenticateToken, authorizeRole(Role.Admin), async (_req: Request, res: Response): Promise<void> => {
   const accounts = await db.Account.findAll();
   res.json(accounts);
 });
 
 // POST /api/accounts
-router.post("/", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.post("/", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const { firstName, lastName, email, password, role, verified } = req.body;
 
   if (!firstName || !lastName || !email || !password || !role) {
@@ -38,7 +39,7 @@ router.post("/", authenticateToken, authorizeRole("admin"), async (req: Request,
 });
 
 // PUT /api/accounts/:id
-router.put("/:id", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.put("/:id", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(String(req.params.id));
   const account = await db.Account.unscoped().findByPk(id);
 
@@ -73,7 +74,7 @@ router.put("/:id", authenticateToken, authorizeRole("admin"), async (req: Reques
 });
 
 // PUT /api/accounts/:id/reset-password
-router.put("/:id/reset-password", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.put("/:id/reset-password", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(String(req.params.id));
   const account = await db.Account.unscoped().findByPk(id);
 
@@ -93,7 +94,7 @@ router.put("/:id/reset-password", authenticateToken, authorizeRole("admin"), asy
 });
 
 // DELETE /api/accounts/:id
-router.delete("/:id", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.delete("/:id", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(String(req.params.id));
 
   if (req.user!.id === id) {

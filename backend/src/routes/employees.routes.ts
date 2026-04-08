@@ -1,17 +1,18 @@
 import { Router, Request, Response } from "express";
 import { db } from "../_helpers/db";
+import { Role } from "../_helpers/role";
 import { authenticateToken, authorizeRole } from "../_middleware/auth";
 
 const router = Router();
 
 // GET /api/employees
-router.get("/", authenticateToken, authorizeRole("admin"), async (_req: Request, res: Response): Promise<void> => {
+router.get("/", authenticateToken, authorizeRole(Role.Admin), async (_req: Request, res: Response): Promise<void> => {
   const employees = await db.Employee.findAll();
   res.json(employees);
 });
 
 // POST /api/employees
-router.post("/", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.post("/", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const { employeeId, userEmail, position, departmentId, hireDate } = req.body;
 
   if (!employeeId || !userEmail || !position || !departmentId || !hireDate) {
@@ -42,7 +43,7 @@ router.post("/", authenticateToken, authorizeRole("admin"), async (req: Request,
 });
 
 // PUT /api/employees/:employeeId
-router.put("/:employeeId", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.put("/:employeeId", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const { employeeId } = req.params;
   const employee = await db.Employee.findOne({ where: { employeeId } });
 
@@ -70,7 +71,7 @@ router.put("/:employeeId", authenticateToken, authorizeRole("admin"), async (req
 });
 
 // DELETE /api/employees/:employeeId
-router.delete("/:employeeId", authenticateToken, authorizeRole("admin"), async (req: Request, res: Response): Promise<void> => {
+router.delete("/:employeeId", authenticateToken, authorizeRole(Role.Admin), async (req: Request, res: Response): Promise<void> => {
   const { employeeId } = req.params;
   const employee = await db.Employee.findOne({ where: { employeeId } });
 
